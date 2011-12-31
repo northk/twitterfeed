@@ -306,17 +306,32 @@ class Twitterfeed_tweets
         try
 		{
     		$xml = @new SimpleXMLElement($result, LIBXML_NOWARNING | LIBXML_NOERROR); 
+
 		}
 		catch (Exception $e)
 		{
 			$this->EE->TMPL->log_item('Twitterfeed module : invalid XML returned from Twitter API');   
 			return FALSE;
 		}
+		
+		// load up all the children so we can check for an HTML error page returned by Twitter
+		$nodes = $xml->children(); 
+            
+            // first check for a rate limit error or other error condition that returns a proper <error> node
 		if ($xml->error) 
 		{ 
 			$curl_error = htmlentities($xml->error, ENT_QUOTES, 'UTF-8');
 			$curl_error = xss_clean($curl_error);
 			$this->EE->TMPL->log_item('Twitterfeed module : Twitter API error : ' . $curl_error);   
+			return FALSE;
+		}
+            
+		// or if Twitter returns anything in its children that has a <title> node, there was some kind of error because it's returning an HTML error page!
+		else if ((count($nodes) > 0) && ($nodes[0]->title))
+		{
+			$twitter_error = htmlentities($nodes[0]->title, ENT_QUOTES, 'UTF-8');
+			$twitter_error = xss_clean($twitter_error);
+			$this->EE->TMPL->log_item('Twitterfeed module : Twitter API error : ' . $twitter_error);
 			return FALSE;
 		}
 		else 
