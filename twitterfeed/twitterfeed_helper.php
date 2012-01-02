@@ -104,23 +104,42 @@ class Twitterfeed_tweets
             $count = 0;
             foreach ($this->_feed_data->status as $status) 
             {
-                if ($count < $this->_numtweets)
-                {
-                    $variables[] = array('screen_name' => $this->clean_output($status->user->screen_name),
-                                                  'name' => $this->clean_output($status->user->name),
-                                                  'created_at' => $this->format_date($status->created_at),
-                                                  'profile_image_url' => $this->clean_output($status->user->profile_image_url), 
-                                                  'location' => $this->clean_output($status->user->location),
-                                                  'description' => $this->clean_output($status->user->description),
-                                                  'url' => $this->clean_output($status->user->url),
-                                                  'text' => $this->format_tweet($status->text));
-                    $count++;                                                  
-                }                                            
+			// only return as many tweets as was requested
+			if ($count == $this->_numtweets)
+			{
+				break;
+			}
+			else
+			{
+	    			// check if this is a retweet and if so, if a valid avatar exists for the person who was retweeted. 
+				// if so, use that person's avatar image instead
+				if (isset($status->retweeted_status->user->profile_image_url))
+				{
+				    $profile_image_url = $status->retweeted_status->user->profile_image_url;
+				}
+				else
+				{
+				    $profile_image_url = $status->user->profile_image_url;			
+				}
+				
+				// load up all the variables and their values for EE to parse
+				$variables[] = array('screen_name' => $this->clean_output($status->user->screen_name),
+									  'name' => $this->clean_output($status->user->name),
+									  'created_at' => $this->format_date($status->created_at),
+									  'profile_image_url' => $this->clean_output($profile_image_url), 
+									  'location' => $this->clean_output($status->user->location),
+									  'description' => $this->clean_output($status->user->description),
+									  'url' => $this->clean_output($status->user->url),
+									  'text' => $this->format_tweet($status->text));
+				$count++;     
+			}                                             
             }
+		
             $output = $this->EE->TMPL->parse_variables($this->EE->TMPL->tagdata, $variables);
             return $output;
-		}
+	  }
     }
+	
 	
 	
 /** --------------------------------------------------
