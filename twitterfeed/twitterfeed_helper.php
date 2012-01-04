@@ -54,7 +54,7 @@ class Twitterfeed_tweets
         $replacement = '\1<a href="http://search.twitter.com/search?q=%23\2">#\2</a>';
         $tweet = preg_replace($pattern, $replacement, $tweet);
 
-        $tweet = xss_clean($tweet);                    
+	  $tweet = $this->EE->security->xss_clean($tweet);
         return $tweet;                    
     }
 
@@ -80,7 +80,7 @@ class Twitterfeed_tweets
     public function clean_output($suspect_output)
     {
         $clean_output = htmlentities($suspect_output, ENT_QUOTES, 'UTF-8');
-        $clean_output = xss_clean($clean_output);
+	  $clean_output = $this->EE->security->xss_clean($clean_output);	  
         return $clean_output;
     }
 
@@ -340,7 +340,7 @@ class Twitterfeed_tweets
 		if ($xml->error) 
 		{ 
 			$curl_error = htmlentities($xml->error, ENT_QUOTES, 'UTF-8');
-			$curl_error = xss_clean($curl_error);
+			$curl_error = $this->EE->security->xss_clean($curl_error);
 			$this->EE->TMPL->log_item('Twitterfeed module : Twitter API error : ' . $curl_error);   
 			return FALSE;
 		}
@@ -349,7 +349,7 @@ class Twitterfeed_tweets
 		else if ((count($nodes) > 0) && ($nodes[0]->title))
 		{
 			$twitter_error = htmlentities($nodes[0]->title, ENT_QUOTES, 'UTF-8');
-			$twitter_error = xss_clean($twitter_error);
+			$twitter_error = $this->EE->security->xss_clean($twitter_error);			
 			$this->EE->TMPL->log_item('Twitterfeed module : Twitter API error : ' . $twitter_error);
 			return FALSE;
 		}
