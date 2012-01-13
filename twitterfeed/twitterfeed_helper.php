@@ -111,26 +111,42 @@ class Twitterfeed_tweets
 			}
 			else
 			{
-	    			// check if this is a retweet and if so, if a valid avatar exists for the person who was retweeted. 
-				// if so, use that person's avatar image instead
-				if (isset($status->retweeted_status->user->profile_image_url))
+	    			// check if this is a retweet and if so, return the original user's tweet and user data
+				// rather than your user name and tweet data. Returning the original user's tweet
+				// avoids truncated tweets since your tweet will have an "RT @username" pre-pended
+				// which can cut off the end of the original tweet. And the user name, URL etc should
+				// really reflect the original user rather than you.
+				if (isset($status->retweeted_status))
 				{
-				    $profile_image_url = $status->retweeted_status->user->profile_image_url;
+					$screen_name = $status->retweeted_status->user->screen_name;
+					$name = $status->retweeted_status->user->name;
+					$profile_image_url = $status->retweeted_status->user->profile_image_url;							
+					$location = $status->retweeted_status->user->location;
+					$description = $status->retweeted_status->user->description;
+					$url = $status->retweeted_status->user->url;
+					$text = "RT @" . $screen_name . ": " . $status->retweeted_status->text;
 				}
 				else
 				{
-				    $profile_image_url = $status->user->profile_image_url;			
+					$screen_name = $status->user->screen_name;
+					$name = $status->user->name;
+					$profile_image_url = $status->user->profile_image_url;
+					$location = $status->user->location;
+					$description = $status->user->description;
+					$url = $status->user->url;
+					$text = $status->text;
 				}
+
 				
 				// load up all the variables and their values for EE to parse
-				$variables[] = array('screen_name' => $this->clean_output($status->user->screen_name),
-									  'name' => $this->clean_output($status->user->name),
+				$variables[] = array('screen_name' => $this->clean_output($screen_name),
+									  'name' => $this->clean_output($name),
 									  'created_at' => $this->format_date($status->created_at),
 									  'profile_image_url' => $this->clean_output($profile_image_url), 
-									  'location' => $this->clean_output($status->user->location),
-									  'description' => $this->clean_output($status->user->description),
-									  'url' => $this->clean_output($status->user->url),
-									  'text' => $this->format_tweet($status->text));
+									  'location' => $this->clean_output($location),
+									  'description' => $this->clean_output($description),
+									  'url' => $this->clean_output($url),
+									  'text' => $this->format_tweet($text));
 				$count++;     
 			}                                             
             }
