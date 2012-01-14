@@ -40,19 +40,19 @@ class Twitterfeed_tweets
         $pattern = '`(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))`si';
         $replacement = '<a href="$1" rel="nofollow">$1</a>';
         $tweet = preg_replace($pattern, $replacement, $tweet);
-        
+                                
         // Next two RegExp's match all occurances of @ (Twitter user names) and # (Twitter hash tag).
         // Used with permission from http://granades.com/2009/04/06/using-regular-expressions-to-match-twitter-users-and-hashtags/
         
         // look for '@username' and turn it into a twitter user link
-        $pattern = '/(^|\s)@(\w+)/';        
-        $replacement = '\1<a href="http://www.twitter.com/\2">@\2</a>';
+	  $pattern = '/@([A-Za-z0-9_]+)/';    
+        $replacement = '<a href="http://www.twitter.com/\1">@\1</a>';
         $tweet = preg_replace($pattern, $replacement, $tweet);
     
         // look for '#' and turn it into a Twitter hash tag
-        $pattern = ('/(^|\s)#(\w+)/');
-        $replacement = '\1<a href="http://search.twitter.com/search?q=%23\2">#\2</a>';
-        $tweet = preg_replace($pattern, $replacement, $tweet);
+	  $pattern = ('/(^|\s)#(\w+)/');
+        $replacement = '\1<a href="http://search.twitter.com/search?q=%23\2">#\2</a>';        
+	  $tweet = preg_replace($pattern, $replacement, $tweet);
 
 	  $tweet = $this->EE->security->xss_clean($tweet);
         return $tweet;                    
