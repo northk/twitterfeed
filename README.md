@@ -1,6 +1,11 @@
 Twitterfeed 1.0 Beta addon for ExpressionEngine
 ===============================
 
+
+**NOTE: Twitter has deprecated their xml rest API since this addon was written. As a result, this addon will no longer work. It would need to be modified to use the new Twitter 1.1 JSON API. See https://dev.twitter.com/docs/api/1.1/overview for details.**
+
+**There are [several addons available](http://devot-ee.com/search/results?keywords=twitter&addon_version_support=ee2) now for providing a Twitter feed for EE so you have lots of options. Best wishes!**
+
 Twitterfeed is a module for the [ExpressionEngine](http://expressionengine.com/) content management system. It grabs, caches and displays a
 public user timeline from Twitter (yours or someone else's, as long is it's a public feed). There are some other great addons which provide similar
 functionality at [devot-ee.com](http://devot-ee.com/), including the official [Twitter
